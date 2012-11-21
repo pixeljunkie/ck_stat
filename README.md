@@ -12,9 +12,15 @@ File `ckeditor/config.js`
 		config.stat = {selected:true,all:true,html:true}; // what statistics output
 	};
 	
+Required
+------------
+Plugin [onselect][onselect] and [onchange][onchange]
+
 1. [Demo][demo]
 2. [Author][author]
 3. [more ckeditor Plugins][more]
 [demo]: http://xdan.ru/project/ckplugins/#demo_stat
 [author]: http://xdan.ru/user/profile/Leroy
 [more]: http://xdan.ru/project/ckplugins/
+[onselect]: https://github.com/xdan/ck_onselect
+[onchange]: https://github.com/xdan/ck_onchange
