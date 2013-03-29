@@ -22,7 +22,7 @@
 
  // use plugin "change"
 CKEDITOR.plugins.add( 'stat',{
-  lang:[ CKEDITOR.lang.detect( 'en' ) ],
+  lang:'en,ru',
 	init : function( editor ){
 		var trim = function ( str ){
 			return str.replace(/^[\s]+([^\s])/g,'\1').replace(/([^\s])[\s]+$/g,'\1');
@@ -145,3 +145,5 @@ CKEDITOR.plugins.add( 'stat',{
 		
 	}
 } );
+, getStatSelect );
+		editor.on( 
