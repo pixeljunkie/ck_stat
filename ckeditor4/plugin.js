@@ -22,7 +22,7 @@
 
  // use plugin "change"
 CKEDITOR.plugins.add( 'stat',{
-  lang:'en,ru',
+	lang : 'en,ru',
 	init : function( editor ){
 		var trim = function ( str ){
 			return str.replace(/^[\s]+([^\s])/g,'\1').replace(/([^\s])[\s]+$/g,'\1');
@@ -84,7 +84,7 @@ CKEDITOR.plugins.add( 'stat',{
 		}
 		
 		editor.on( 'instanceReady', function(e) { 
-			var places = ['stat','stat_select','stat_source'];
+			var places = ['stat','stat_select','stat_source','stat_without_space'];
 			var style =  'float:left; line-height:23px; margin-left:10px;';
 			for(var r in places){
 				var div = document.createElement('div');
@@ -109,7 +109,7 @@ CKEDITOR.plugins.add( 'stat',{
 				}else{
 					text = getAreaSelection(); 
 				}
-				document.getElementById( 'cke_stat_select_'+editor.name )&&(document.getElementById( 'cke_stat_select_'+editor.name ).innerHTML = editor.lang.stat.sel+':'+text.length);
+				document.getElementById( 'cke_stat_select_'+editor.name )&&(document.getElementById( 'cke_stat_select_'+editor.name ).innerHTML = editor.lang.stat.sel+':'+text.replace(/[\s\n\r]/g,'').length);
 		}
 		var getStatSelect = function(){
 			clearTimeout(timerSelect);
@@ -145,5 +145,3 @@ CKEDITOR.plugins.add( 'stat',{
 		
 	}
 } );
-, getStatSelect );
-		editor.on( 
