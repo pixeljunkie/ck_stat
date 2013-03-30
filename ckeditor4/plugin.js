@@ -1,6 +1,7 @@
 /*
  * @file text statistics plugin for CKEditor
  * Copyright (C) 2012 Chupurnov Valeriy <leroy@xdan.ru>(http://xdan.ru)
+ * @version 1.4
  *
  * == BEGIN LICENSE ==
  *
@@ -103,11 +104,13 @@ CKEDITOR.plugins.add( 'stat',{
 		var timerSelect = 0;
 		function _getStatSelect(){
 				var text = '';
-				if ( editor.mode != 'source' ){
+				if ( editor.mode == 'wysiwyg' ){
 					var sel = editor.getSelection();
 					text = (sel&&sel.getType()==CKEDITOR.SELECTION_TEXT&&sel.getSelectedText()!==null)?strip(sel.getSelectedText()):'';
 				}else{
-					text = getAreaSelection(); 
+					if(!window["codemirror_"+editor.id])
+						text = getAreaSelection();
+					else text = window["codemirror_"+editor.id].getSelection();
 				}
 				document.getElementById( 'cke_stat_select_'+editor.name )&&(document.getElementById( 'cke_stat_select_'+editor.name ).innerHTML = editor.lang.stat.sel+':'+text.replace(/[\s\n\r]/g,'').length);
 		}
