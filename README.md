@@ -16,6 +16,8 @@ Required
 ------------
 Plugin [onselect][onselect] and [onchange][onchange]
 
+Version 1.5 for ckeditor 4.* works without onselect and onchange
+
 1. [Demo][demo]
 2. [Author][author]
 3. [more ckeditor Plugins][more]
