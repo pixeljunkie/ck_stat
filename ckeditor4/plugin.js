@@ -1,7 +1,7 @@
 /*
  * @file text statistics plugin for CKEditor
  * Copyright (C) 2012 Chupurnov Valeriy <leroy@xdan.ru>(http://xdan.ru)
- * @version 1.4
+ * @version 1.5
  *
  * == BEGIN LICENSE ==
  *
@@ -21,20 +21,22 @@
  *
  */
 
- // use plugin "change"
 CKEDITOR.plugins.add( 'stat',{
-	lang : 'en,ru',
+	lang : 'en,ru,fr',
 	init : function( editor ){
 		var trim = function ( str ){
-			return str.replace(/^[\s]+([^\s])/g,'\1').replace(/([^\s])[\s]+$/g,'\1');
+			return str.replace(/^[\s]+([^\s])/g,'$1').replace(/([^\s])[\s]+$/g,'$1');
 		}
-		function getAreaSelection() {
+		var wordcount = function ( text ) {
+			text = text.replace(/(\r\n|\n|\r)/gm, ' ').replace(/&nbsp;/g, ' ');
+			return trim(strip(text)).split(/\s+/).length;
+		}
+		var getAreaSelection = function () {
 			var textArea = editor.textarea.$;
-			if (document.selection) { //IE
+			if ( document.selection ) { //IE
 				var bm = document.selection.createRange().getBookmark();
 				var sel = textArea.createTextRange();
 				sel.moveToBookmark(bm);
-
 				var sleft = textArea.createTextRange();
 				sleft.collapse(true);
 				sleft.setEndPoint("EndToStart", sel);
@@ -67,25 +69,32 @@ CKEDITOR.plugins.add( 'stat',{
 			}
 			return  editor.textarea.$.value.substring( startPos, endPos ); 
 		} 
-		var strip = function( str ) {
+		var strip = function( str,option ) {
             var key = '';
             var matches = [];
             str += '';
             matches = str.match(/(<\/?[\S][^>]*>|&[a-z]+;)/gi);
             for (key in matches) {
                 if ( isNaN(key) )continue;
-                str = str.split(matches[key].toString()).join(' '); // Custom replace. No regexing
+                str = str.split(matches[key].toString()).join(' ');
             }
-            return trim(str.replace(/[\s]/gi,''));
+            if ( option == 'nospace' )
+				return trim( str.replace(/[\s]/gi,'') );
+			else 
+				return str;
 		}
+		var timerstatText = 0;
 		var statText = function(){
-			var text = editor.getData()+'';
-			document.getElementById( 'cke_stat_'+editor.name )&& (document.getElementById( 'cke_stat_'+editor.name ).innerHTML = editor.lang.stat.strlen+':'+strip(text).length);
-			document.getElementById( 'cke_stat_source_'+editor.name )&& (document.getElementById( 'cke_stat_source_'+editor.name ).innerHTML = editor.lang.stat.source+':'+text.length);
-		}
-		
+			clearTimeout(timerstatText);
+			timerstatText = setTimeout(function(){
+				var text = editor.getData()+'';
+				document.getElementById( 'cke_stat_word_number_'+editor.name )&& (document.getElementById( 'cke_stat_word_number_'+editor.name ).innerHTML = editor.lang.stat.words+':'+wordcount(text));
+				document.getElementById( 'cke_stat_'+editor.name )&& (document.getElementById( 'cke_stat_'+editor.name ).innerHTML = editor.lang.stat.strlen+':'+strip(text).length);
+				document.getElementById( 'cke_stat_source_'+editor.name )&& (document.getElementById( 'cke_stat_source_'+editor.name ).innerHTML = editor.lang.stat.source+':'+text.length);
+			},100);
+		};
 		editor.on( 'instanceReady', function(e) { 
-			var places = ['stat','stat_select','stat_source','stat_without_space'];
+			var places = ['stat','stat_select','stat_source','stat_without_space','stat_word_number'];
 			var style =  'float:left; line-height:23px; margin-left:10px;';
 			for(var r in places){
 				var div = document.createElement('div');
@@ -106,7 +115,7 @@ CKEDITOR.plugins.add( 'stat',{
 				var text = '';
 				if ( editor.mode == 'wysiwyg' ){
 					var sel = editor.getSelection();
-					text = (sel&&sel.getType()==CKEDITOR.SELECTION_TEXT&&sel.getSelectedText()!==null)?strip(sel.getSelectedText()):'';
+					text = (sel&&sel.getType()==CKEDITOR.SELECTION_TEXT&&sel.getSelectedText()!==null)?strip(sel.getSelectedText(),'nospace'):'';
 				}else{
 					if(!window["codemirror_"+editor.id])
 						text = getAreaSelection();
@@ -144,7 +153,8 @@ CKEDITOR.plugins.add( 'stat',{
 			});
 		});
 		editor.on( 'selectionChange', getStatSelect );
-		editor.on( 'change', statText);
-		
+		editor.on('key', statText);
+		editor.on('afterCommandExec', statText);
+		editor.on('dialogHide', statText);
 	}
 } );
