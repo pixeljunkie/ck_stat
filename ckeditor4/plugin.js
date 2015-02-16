@@ -22,7 +22,7 @@
  */
 
 CKEDITOR.plugins.add( 'stat',{
-	lang : 'en,ru,fr',
+	lang : 'en,ru,fr,de',
 	init : function( editor ){
 		var trim = function ( str ){
 			return str.replace(/^[\s]+([^\s])/g,'$1').replace(/([^\s])[\s]+$/g,'$1');
